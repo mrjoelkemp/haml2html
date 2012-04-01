@@ -52,47 +52,39 @@ def haml2html(hamls, output_path):
 	
 	filenames = hamls["filenames"]
 	filepaths = hamls["filepaths"]
+	
 	output_file_ext = ".html"
 	num_converted = 0
 	
 	for i in range(len(filepaths)):
 		# filepaths contains the entire path + filename + extension for input file
 		input = filepaths[i]
-		
-		# Get the subfolders like "trivia", "frames", etc
-		# This will allow us to know which partials belong to which controllers
-		#../app/views/frames/ becomes ["..", "app", "views", "frames"]
-		view_subfolder_name = input.split("/")[3]
-		
+				
 		input_name = filenames[i]
 		
 		# Keep the non-extension part of the filename
 		input_name = input_name.split(".")[0]
 		
-		output = output_path + view_subfolder_name + input_name + output_file_ext
+		output = output_path + input_name + output_file_ext
 		print(input, "to", output)
 		
 		# Parse the haml file
-		# haml _path/filename.haml _ouput_path/filename.html
-		
+		# Syntax: haml _path/filename.haml _ouput_path/filename.html		
 		command = ["haml", "--trace", input, output]
 		
 		# Execute the shell command
 		p = subprocess.Popen(command)
-		print ("p:", p)
 		
 		num_converted += 1
 	
 	return num_converted
 	
 def main():
-	
 	args = sys.argv
 	
 	input_arg_index = 1
 	output_arg_index = 2
-	
- 	num_args = len(args)
+	num_args = len(args)
 	
 	# If the user doesn't supply arguments, assume the current directory
 	input_dir = "." if (num_args == 0) else args[1]
@@ -107,6 +99,7 @@ def main():
 	print ("Converting HAML files from", input_dir, "to HTML files in", output_dir)
 	num_converted = haml2html(hamls, output_dir)
 	
-	print(num_converted, "HAML files converted!")
+	file_plural = "file" if num_converted == 1 else "files"
+	print(num_converted, "HAML " + file_plural +" converted!")
 	
 main()
